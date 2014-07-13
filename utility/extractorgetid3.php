@@ -35,7 +35,14 @@ class ExtractorGetID3 implements Extractor {
 	 * @return array extracted data
 	 */
 	public function extract($path) {
+		$this->getID3->option_tag_id3v1 = false;
 		$metadata = $this->getID3->analyze($path);
+		if (isset($metadata['id3v2'])) {
+			//ID3v2 - Are we done?
+		} else {
+			$this->getID3->option_tag_id3v1 = true;
+			$metadata = $this->getID3->analyze($path);
+		}
 
 		// TODO make non static
 		\getid3_lib::CopyTagsToComments($metadata);
